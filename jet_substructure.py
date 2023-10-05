@@ -14,7 +14,7 @@ import numpy as np
 import pyjet
 from tqdm import tqdm
 
-from src.physics import numpy_locals_to_mass_and_pt
+from physics import numpy_locals_to_mass_and_pt
 
 
 def dij(
@@ -395,6 +395,7 @@ def dump_hlvs(
     ecf2s = []
     ecf3s = []
     d2s = []
+    d2s_modified = []
 
     # Get the mask of the jets so that the padded elements dont contribute
     masks = np.any(jets != 0, axis=-1)
@@ -457,6 +458,7 @@ def dump_hlvs(
 
         # ATLAS D2
         d2s.append((ecf3 * sum_pt) / (ecf2**2))
+        d2s_modified.append(ecf3 / (ecf2**3))
 
     # Save all the data to an HDF file
     with h5py.File(h5file, mode="w") as file:
@@ -470,6 +472,7 @@ def dump_hlvs(
         file.create_dataset("ecf2", data=ecf2s)
         file.create_dataset("ecf3", data=ecf3s)
         file.create_dataset("d2", data=d2s)
+        file.create_dataset("d2_modified", data=d2s_modified)
         file.create_dataset("pt", data=pt)
         file.create_dataset("mass", data=mass)
 
